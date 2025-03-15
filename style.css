@@ -1265,26 +1265,6 @@ html[data-theme="dark"] .theme-toggle-mobile button .fa-moon {
     display: none;
 }
 
-@media screen and (max-width: 768px) {
-    .theme-toggle {
-        display: none;
-    }
-    
-    .theme-toggle-mobile {
-        display: flex;
-        margin-left: 15px;
-    }
-}
-
-/* Dark mode adjustments for project images */
-html[data-theme="dark"] .project-img::after {
-    background: rgba(0, 0, 0, 0.4);
-}
-
-html[data-theme="dark"] .project-card {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
 /* Responsive adjustments for project images */
 @media screen and (max-width: 768px) {
     .project-img {
