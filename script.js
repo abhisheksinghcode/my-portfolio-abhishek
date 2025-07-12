@@ -1,5 +1,44 @@
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Theme Toggle Functionality
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const themeToggleBtnMobile = document.getElementById('theme-toggle-btn-mobile');
+    
+    // Check for saved theme preference or use device preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Set initial theme
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    } else if (prefersDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    
+    // Function to toggle theme
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        // Update theme color meta tag for mobile browsers
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', newTheme === 'dark' ? '#121212' : '#4a6cf7');
+        }
+    }
+    
+    // Add event listeners to theme toggle buttons
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+    
+    if (themeToggleBtnMobile) {
+        themeToggleBtnMobile.addEventListener('click', toggleTheme);
+    }
+
     // Mobile Navigation Toggle
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
@@ -165,20 +204,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Animation on scroll using IntersectionObserver for better performance
-    const animateElements = document.querySelectorAll('.skill-item, .project-card, .timeline-item');
+    const animateElements = document.querySelectorAll('.skill-item, .project-card, .timeline-item, .section-header, .about-text, .contact-info, .contact-form');
     
     // Set initial styles for animation
     animateElements.forEach(element => {
         element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
-        element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        element.style.transform = 'translateY(30px)';
+        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     });
     
     const animationObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                // Add a small delay for each element to create a cascade effect
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, 100);
                 // Stop observing after animation is triggered
                 animationObserver.unobserve(entry.target);
             }
@@ -192,4 +234,25 @@ document.addEventListener('DOMContentLoaded', function() {
     animateElements.forEach(element => {
         animationObserver.observe(element);
     });
+    
+    // Detect mobile devices for specific optimizations
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // Add mobile-specific class to body
+        document.body.classList.add('mobile-device');
+        
+        // Add touch event listeners for better mobile interaction
+        const touchElements = document.querySelectorAll('.btn, .nav-links a, .social-icons a, .project-links a');
+        
+        touchElements.forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.classList.add('touch-active');
+            }, { passive: true });
+            
+            element.addEventListener('touchend', function() {
+                this.classList.remove('touch-active');
+            }, { passive: true });
+        });
+    }
 });
